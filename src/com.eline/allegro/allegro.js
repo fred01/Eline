@@ -300,7 +300,7 @@ function _touchstart(e)
 		var point = e.changedTouches.item(c);
 		var t = {
 			sx:point.clientX-rect.left,
-			sx:point.clientY-rect.top,
+			sy:point.clientY-rect.top,
 			mx:0,
 			my:0,
 			px:point.clientX-rect.left,
@@ -1643,7 +1643,7 @@ function play_sample(sample,vol,freq,loop)
 	vol = typeof vol !== 'undefined' ?  vol : 1.0;
 	freq = typeof freq !== 'undefined' ?  vol : 1.0;
 	loop = typeof loop !== 'undefined' ?  loop : false;
-	adjust_sample(sample,vol,freq,loop)
+	adjust_sample(sample,vol,freq,loop);
 	sample.element.currentTime = 0;
 	sample.element.play();
 }
@@ -1809,7 +1809,7 @@ function anglediff(a,b)
 {
 	var diff = b - a;
 	diff /= 360; 
-	diff = (diff - floor(diff))*360
+	diff = (diff - floor(diff))*360;
 	if (diff > 180) { diff -= 360; }
 	return diff;
 }
@@ -1885,7 +1885,7 @@ function _onerror(e)
 	var fa = e.filename.split("/");
 	fa.reverse();
   log("["+ fa[0]+":"+e.lineno+":"+e.colno+"] " + e.message);
-};
+}
 
 /// Enables debugging to a console.
 /// 'console' can be any html element that can accept text, preferably a <div>

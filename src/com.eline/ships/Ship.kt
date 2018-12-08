@@ -1,23 +1,10 @@
 package com.eline.ships
 
-import GFX_COL_WHITE
-import com.eline.allegro.canvas
-import com.eline.allegro.hline
-import com.eline.allegro.line
-import com.eline.allegro.vline
+import com.eline.allegro.Screen
 import com.eline.vector.Matrix
 import com.eline.vector.Point
 import com.eline.vector.Vector
-
-val GFX_SCALE = 2
-val GFX_X_OFFSET = 144
-val GFX_Y_OFFSET = 44
-//val GFX_X_CENTRE = 256
-//val GFX_Y_CENTRE = 192
-//val GFX_VIEW_TX = 1
-//val GFX_VIEW_TY = 1
-//val GFX_VIEW_BX = 509
-//val GFX_VIEW_BY = 381
+import kotlin.math.sqrt
 
 
 data class ShipPoint(
@@ -70,33 +57,136 @@ data class ShipData(
 
 data class Ship(
         val shipData: ShipData,
-        val location: Vector,
-        val rotmat: Matrix,
-        val rotx: Int,
+        var location: Vector,
+        var rotmat: Matrix,
+        var rotx: Int,
         val rotz: Int,
         val flags: Int,
         val energy: Int,
-        val velocity: Int,
-        val acceleration: Int,
+        var velocity: Int,
+        var acceleration: Int,
         val missiles: Int,
         val target: Int,
         val bravery: Int,
         val exp_delta: Int,
         val exp_seed: Int,
-        val distance: Int
+        var distance: Int
 ) {
-    fun drawWireframeShip() {
-        val transMat = Matrix(
-                this.rotmat.vector1,
-                this.rotmat.vector2,
-                this.rotmat.vector3
+
+    fun isDead(): Boolean {
+        return false
+    }
+
+    private fun rotateXFirst (a:Double, b:Double, direction:Int):Pair<Double, Double>
+    {
+        return if (direction < 0) {
+            a - (a / 512) + (b / 19) to b - (b / 512) - (a / 19)
+        }
+        else {
+            a - (a / 512) - (b / 19) to b - (b / 512) + (a / 19)
+        }
+    }
+
+
+
+    fun move(flightRoll: Int, flightClimb: Int, flightSpeed:Int) {
+
+        val alpha = flightRoll.toDouble() / 256.0
+        val beta = flightClimb.toDouble() / 256.0
+
+        var x = location.x
+        var y = location.y
+        var z = location.z
+
+        if (!this.isDead()) {
+            if (velocity != 0) {
+                val speed = velocity.toDouble() * 1.5
+
+                x += rotmat[2].x * speed
+                y += rotmat[2].y * speed
+                z += rotmat[2].z * speed
+            }
+
+            if (acceleration != 0) {
+                velocity += acceleration
+                acceleration = 0;
+                if (velocity > shipData.velocity) {
+                    velocity = shipData.velocity
+                }
+
+                if (velocity <= 0) {
+                    velocity = 1;
+                }
+            }
+        }
+
+        val k2 = y - alpha * x
+        z += beta * k2
+        y = k2 - z * beta
+        x += alpha * y
+
+        z -= flightSpeed
+
+        location = Vector(x, y, z)
+
+        distance = sqrt (x*x+y*y+z*z).toInt()
+
+        rotmat = Matrix(
+                rotmat[0].rotate(alpha, beta),
+                rotmat[1].rotate(alpha, beta),
+                rotmat[2].rotate(alpha, beta)
         )
 
-        val cameraVec = this.location.multMatrix(transMat).unitVector()
 
+        if (isDead()) {
+            return
+        }
+
+
+
+        /* If necessary rotate the object around the X axis... */
+
+        if (rotx != 0) {
+            val r1 = rotateXFirst(rotmat[2].x, rotmat[1].x, rotx)
+            val r2 = rotateXFirst(rotmat[2].y, rotmat[1].y, rotx)
+            val r3 = rotateXFirst(rotmat[2].z, rotmat[1].z, rotx)
+            rotmat = Matrix(
+                    rotmat[0],
+                    Vector(r1.second, r2.second, r3.second),
+                    Vector(r1.first, r2.first, r3.first)
+            )
+
+            if ((rotx != 127) && (rotx != -127))
+                rotx -= if (rotx < 0) -1 else 1
+        }
+
+
+        /* If necessary rotate the object around the Z axis... */
+
+        if (rotz != 0) {
+            rotate_x_first(& obj->rotmat[0].x, &obj->rotmat[1].x, rotz);
+            rotate_x_first(& obj->rotmat[0].y, &obj->rotmat[1].y, rotz);
+            rotate_x_first(& obj->rotmat[0].z, &obj->rotmat[1].z, rotz);
+
+            if ((rotz != 127) && (rotz != -127))
+                rotz -= if (rotz < 0) -1 else 1
+        }
+
+
+        /* Orthonormalize the rotation matrix... */
+
+        rotmat = rotmat.tidy()
+    }
+
+    fun drawWireframeShip(screen: Screen) {
+        val transMat = Matrix(
+                this.rotmat[0],
+                this.rotmat[1],
+                this.rotmat[2]
+        )
+        val cameraVec = this.location.multiplyMatrix(transMat).unitVector()
         val visible = this.shipData.normals.map { normal ->
             val vec = Vector(normal.x.toDouble(), normal.y.toDouble(), normal.z.toDouble())
-
             if ((vec.x == 0.0) && (vec.y == 0.0) && (vec.z == 0.0)) {
                 true
             } else {
@@ -107,7 +197,7 @@ data class Ship(
 
         val pointList = this.shipData.points.map { shipPoint ->
             val v = Vector(shipPoint.x.toDouble(), shipPoint.y.toDouble(), shipPoint.z.toDouble())
-            val vec = v.multMatrix(transMat.transpose())
+            val vec = v.multiplyMatrix(transMat.transpose())
 
             val rx = vec.x + this.location.x
             val ry = vec.y + this.location.y
@@ -121,8 +211,8 @@ data class Ship(
             sx += 128
             sy += 96
 
-            sx *= GFX_SCALE
-            sy *= GFX_SCALE
+            sx *= Screen.GFX_SCALE
+            sy *= Screen.GFX_SCALE
 
             Point(sx, sy, 0)
         }
@@ -131,22 +221,10 @@ data class Ship(
             if (visible[line.face1] || visible[line.face2]) {
                 val sx = pointList[line.start_point].x
                 val sy = pointList[line.start_point].y
-
                 val ex = pointList[line.end_point].x
                 val ey = pointList[line.end_point].y
-
-                gfx_draw_line(sx, sy, ex, ey)
+                screen.drawLine(sx, sy, ex, ey)
             }
         }
-    }
-}
-
-fun gfx_draw_line(x1: Int, y1: Int, x2: Int, y2: Int) {
-    if (y1 == y2) {
-        hline(canvas, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, x2 + GFX_X_OFFSET, GFX_COL_WHITE, 2)
-    } else if (x1 == x2) {
-        vline(canvas, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, y2 + GFX_Y_OFFSET, GFX_COL_WHITE, 2)
-    } else {
-        line(canvas, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, x2 + GFX_X_OFFSET, y2 + GFX_Y_OFFSET, GFX_COL_WHITE, 2)
     }
 }

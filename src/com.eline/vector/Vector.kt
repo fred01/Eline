@@ -13,18 +13,18 @@ data class Vector(
         val y: Double,
         val z: Double
 ) {
-    fun multMatrix(m: Matrix): Vector {
+    fun multiplyMatrix(m: Matrix): Vector {
         val x = (this.x * m.vector1.x) +
                 (this.y * m.vector1.y) +
                 (this.z * m.vector1.z)
 
         val y = (this.x * m.vector2.x) +
                 (this.y * m.vector2.y) +
-                (this.z * m.vector2.z);
+                (this.z * m.vector2.z)
 
         val z = (this.x * m.vector3.x) +
                 (this.y * m.vector3.y) +
-                (this.z * m.vector3.z);
+                (this.z * m.vector3.z)
 
         return Vector(x, y, z)
     }
@@ -34,13 +34,31 @@ data class Vector(
         val ly = this.y
         val lz = this.z
 
-        val uni = sqrt(lx * lx + ly * ly + lz * lz);
+        val uni = sqrt(lx * lx + ly * ly + lz * lz)
 
-        return Vector(lx / uni, ly / uni, lz / uni);
+        return Vector(lx / uni, ly / uni, lz / uni)
     }
 
     fun vectorDotProduct(second: Vector): Double {
         return (this.x * second.x) + (this.y * second.y) + (this.z * second.z)
+    }
+
+    fun rotate (alpha:Double, beta:Double):Vector {
+        var x = this.x
+        var y = this.y
+        var z = this.z
+
+        y -= alpha * x
+        x += alpha * y
+        y -= beta * z
+        z += beta * y
+
+        return Vector(x, y, z)
+    }
+
+
+    fun decZ(value:Int):Vector {
+        return this.copy(z = this.z - value)
     }
 }
 
@@ -66,6 +84,43 @@ data class Matrix(
         )
     }
 
+    fun tidy(): Matrix {
+
+        val v2 = this[2].unitVector()
+
+        val v1c = if ((v2.x > -1) && (v2.x < 1))
+        {
+            if ((v2.y > -1) && (v2.y < 1))
+            {
+                val v1z = -(v2.x * this[1].x + v2.y * this[1].y) / v2.z
+                Vector(this[1].x, this[1].y, v1z)
+            }
+            else
+            {
+                val v1y = -(v2.x * this[1].x + v2.z * this[1].z) / v2.y
+                Vector(this[1].x, v1y, this[1].z)
+            }
+        }
+        else
+        {
+            val v1x = -(v2.y * this[1].y + v2.z * this[1].z) / v2.x
+            Vector(v1x,  this[1].y, this[1].z)
+        }
+
+        val v1 = v1c.unitVector()
+
+
+        /* xyzzy... nothing happens. :-)*/
+
+        val v0 = Vector(
+                v1.y * v2.z - v1.z * v2.y,
+                v1.z * v2.x - v1.x * v2.z,
+                v1.x * v2.y - v1.y * v2.x
+        )
+
+        return Matrix(v0, v1, v2)
+    }
+
     companion object {
         val startMatrix = Matrix(
                 Vector(1.0, 0.0, 0.0),
@@ -76,30 +131,4 @@ data class Matrix(
     }
 
 }
-
-//fun multVector(v: Vector, m: Matrix): Vector {
-//    val x = (v.x * m.vector1.x) +
-//            (v.y * m.vector1.y) +
-//            (v.z * m.vector1.z)
-//
-//    val y = (v.x * m.vector2.x) +
-//            (v.y * m.vector2.y) +
-//            (v.z * m.vector2.z);
-//
-//    val z = (v.x * m.vector3.x) +
-//            (v.y * m.vector3.y) +
-//            (v.z * m.vector3.z);
-//
-//    return Vector(x, y, z)
-//}
-//
-//fun unitVector(v: Vector): Vector {
-//    val lx = v.x
-//    val ly = v.y
-//    val lz = v.z
-//
-//    val uni = sqrt(lx * lx + ly * ly + lz * lz);
-//
-//    return Vector(lx / uni, ly / uni, lz / uni);
-//}
 

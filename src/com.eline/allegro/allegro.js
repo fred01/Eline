@@ -834,7 +834,7 @@ function set_gfx_mode(canvas_id,width,height,smooth)
 	var ctx = cv.getContext("2d");
 	
 	// turn off image aliasing
-	ctx.mozImageSmoothingEnabled = smooth;
+	ctx.imageSmoothingEnabled = smooth;
 	ctx.webkitImageSmoothingEnabled = smooth;
 	ctx.imageSmoothingEnabled = smooth;
 	

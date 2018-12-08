@@ -1621,7 +1621,7 @@ function load_sample(filename)
 			sample.ready=true;
 			log("Sample " + filename + " loaded!");
 		}
-	}
+	};
 	return sample;
 }
 

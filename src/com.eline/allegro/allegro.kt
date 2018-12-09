@@ -33,6 +33,9 @@ external fun line(canvas: Canvas,x1:Int,y1:Int,x2:Int,y2:Int,colour:Long,width:I
 external fun rectfill(canvas: Canvas,x1:Int,y1:Int,w:Int,h:Int,colour:Long)
 external fun create_bitmap(width:Int,height:Int):Canvas
 external fun blit(source:Canvas,dest:Canvas,sx:Int,sy:Int,dx:Int,dy:Int,w:Int,h:Int)
+external fun loop(block: () -> Unit, spped:Double)
+external fun BPS_TO_TIMER(bps:Int):Double
+
 
 class Screen {
     companion object {
@@ -79,7 +82,7 @@ class Screen {
     }
 
     fun clearDisplay () {
-        rectfill (backScreen, GFX_X_OFFSET + 1, GFX_Y_OFFSET + 1, 510 + GFX_X_OFFSET, 383 + GFX_Y_OFFSET, GFX_COL_BLACK);
+        rectfill (backScreen, GFX_X_OFFSET + 1, GFX_Y_OFFSET + 1, 510 + GFX_X_OFFSET, 383 + GFX_Y_OFFSET, GFX_COL_BLACK)
     }
 
     fun updateScreen() {

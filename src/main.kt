@@ -1,4 +1,6 @@
+import com.eline.allegro.BPS_TO_TIMER
 import com.eline.allegro.Screen
+import com.eline.allegro.loop
 import com.eline.ships.Ship
 import com.eline.ships.data.thargoidShipData
 import com.eline.vector.Matrix
@@ -21,20 +23,19 @@ fun main(args: Array<String>) {
     )
 
 
-//    thargoidShip.drawWireframeShip(screen)
-//    screen.updateScreen()
 
 
-    while (true) {
+    loop( {
         if (thargoidShip.location.z - 100 > 384) {
             thargoidShip.location = thargoidShip.location.decZ(100)
         }
         screen.clearDisplay()
-        val flightRoll = 1;
+        val flightRoll = 1
 
         thargoidShip.drawWireframeShip(screen)
         screen.updateScreen()
-    }
+        thargoidShip.move(flightRoll,0,0)
+    }, BPS_TO_TIMER(10))
 
 
 }

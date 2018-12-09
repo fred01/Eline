@@ -60,7 +60,7 @@ data class Ship(
         var location: Vector,
         var rotmat: Matrix,
         var rotx: Int,
-        val rotz: Int,
+        var rotz: Int,
         val flags: Int,
         val energy: Int,
         var velocity: Int,
@@ -109,13 +109,13 @@ data class Ship(
 
             if (acceleration != 0) {
                 velocity += acceleration
-                acceleration = 0;
+                acceleration = 0
                 if (velocity > shipData.velocity) {
                     velocity = shipData.velocity
                 }
 
                 if (velocity <= 0) {
-                    velocity = 1;
+                    velocity = 1
                 }
             }
         }
@@ -164,9 +164,14 @@ data class Ship(
         /* If necessary rotate the object around the Z axis... */
 
         if (rotz != 0) {
-            rotate_x_first(& obj->rotmat[0].x, &obj->rotmat[1].x, rotz);
-            rotate_x_first(& obj->rotmat[0].y, &obj->rotmat[1].y, rotz);
-            rotate_x_first(& obj->rotmat[0].z, &obj->rotmat[1].z, rotz);
+            val r1 = rotateXFirst(rotmat[0].x, rotmat[1].x, rotz)
+            val r2 = rotateXFirst(rotmat[0].y, rotmat[1].y, rotz)
+            val r3 = rotateXFirst(rotmat[0].z, rotmat[1].z, rotz)
+            rotmat = Matrix(
+                    Vector(r1.first, r2.first, r3.first),
+                    Vector(r1.second, r2.second, r3.second),
+                    rotmat[2]
+            )
 
             if ((rotz != 127) && (rotz != -127))
                 rotz -= if (rotz < 0) -1 else 1

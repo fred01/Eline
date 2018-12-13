@@ -24,6 +24,11 @@ external class Font {
 external val canvas: Canvas
 external var font:Font
 
+external val key:Array<Boolean>
+
+external val KEY_A:Int
+external val KEY_N:Int
+
 external fun allegro_init()
 external fun set_gfx_mode(id:String, width:Int, height:Int)
 external fun makecol(red:Int,green:Int,blue:Int,alpha:Int = definedExternally):Long
@@ -39,6 +44,8 @@ external fun blit(source:Canvas,dest:Canvas,sx:Int,sy:Int,dx:Int,dy:Int,w:Int,h:
 external fun loop(block: () -> Unit, spped:Double)
 external fun BPS_TO_TIMER(bps:Int):Double
 external fun load_base64_font(data:String):Font
+external fun install_keyboard(enable_keys:List<String> = definedExternally )
+
 
 class Screen {
     companion object {
@@ -53,6 +60,10 @@ class Screen {
 
     lateinit var backScreen:Canvas
     lateinit var mainFont:Font
+    var width: Int = 0
+    var height: Int = 0
+    var screenCenterX = 0
+    var screenCenterY = 0
     //val GFX_X_CENTRE = 256
     //val GFX_Y_CENTRE = 192
     //val GFX_VIEW_TX = 1
@@ -65,33 +76,35 @@ class Screen {
         val element = document.getElementById(id)!!
         val w = element.clientWidth
         val h = element.clientHeight
+        width = w
+        height = h
         set_gfx_mode(id, w, h)
         backScreen = create_bitmap(w,h)
         mainFont = load_base64_font(zxspectrum_data_woff)
     }
 
 
-    fun textOut(txt:String, x:Int, y:Int) {
-        textout (backScreen,mainFont, txt, (x / (2 / GFX_SCALE)) + GFX_X_OFFSET, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, GFX_COL_WHITE)
-    }
+//    fun textOut(txt:String, x:Int, y:Int) {
+//        textout (backScreen,mainFont, txt, (x / (2 / GFX_SCALE)) + GFX_X_OFFSET, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, GFX_COL_WHITE)
+//    }
 
     fun textOutCenter(y:Int, str:String, col:Long) {
-        textout_centre(backScreen, mainFont, str, (128 * GFX_SCALE) + GFX_X_OFFSET, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, col)
+        textout_centre(backScreen, mainFont, str, (200 * GFX_SCALE) , (y / (2 / GFX_SCALE))+ GFX_Y_OFFSET , 16, col)
     }
 
 
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
         if (y1 == y2) {
-            hline(backScreen, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, x2 + GFX_X_OFFSET, GFX_COL_WHITE, 2)
+            hline(backScreen, x1, y1 + GFX_Y_OFFSET , x2 , GFX_COL_WHITE, 2)
         } else if (x1 == x2) {
-            vline(backScreen, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, y2 + GFX_Y_OFFSET, GFX_COL_WHITE, 2)
+            vline(backScreen, x1, y1  + GFX_Y_OFFSET, y2 + GFX_Y_OFFSET , GFX_COL_WHITE, 2)
         } else {
-            line(backScreen, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, x2 + GFX_X_OFFSET, y2 + GFX_Y_OFFSET, GFX_COL_WHITE, 2)
+            line(backScreen, x1, y1 + GFX_Y_OFFSET , x2 , y2 + GFX_Y_OFFSET , GFX_COL_WHITE, 2)
         }
     }
 
     fun clear(color: Long) {
-        clear_to_color(backScreen, color)
+        clear_to_color(canvas, color)
     }
 
     fun clearDisplay () {
@@ -99,6 +112,6 @@ class Screen {
     }
 
     fun updateScreen() {
-        blit(backScreen, canvas, GFX_X_OFFSET, GFX_Y_OFFSET, GFX_X_OFFSET, GFX_Y_OFFSET, 512, 512)
+        blit(backScreen, canvas, 0, 0, 0, 0, width, height)
     }
 }

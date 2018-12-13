@@ -213,7 +213,7 @@ data class Ship(
 
             sy = -sy
 
-            sx += 128
+            sx += 200
             sy += 96
 
             sx *= Screen.GFX_SCALE

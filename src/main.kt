@@ -1,6 +1,7 @@
 
 import com.eline.allegro.BPS_TO_TIMER
 import com.eline.allegro.Screen
+import com.eline.allegro.Screen.Companion.GFX_COL_WHITE
 import com.eline.allegro.loop
 import com.eline.ships.Ship
 import com.eline.ships.data.pythonShipData
@@ -39,10 +40,10 @@ fun main(args: Array<String>) {
             pythonShip.location = pythonShip.location.decZ(100)
         }
         screen.clearDisplay()
-        val flightRoll = 1
+        val flightRoll = 0
 
         pythonShip.drawWireframeShip(screen)
-        screen.textOut("Hello", 50,50)
+        screen.textOutCenter(32, "Front View", GFX_COL_WHITE)
         screen.updateScreen()
         pythonShip.move(flightRoll,0,0)
     }, BPS_TO_TIMER(10))

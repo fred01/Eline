@@ -75,6 +75,11 @@ class Screen {
         textout (backScreen,mainFont, txt, (x / (2 / GFX_SCALE)) + GFX_X_OFFSET, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, GFX_COL_WHITE)
     }
 
+    fun textOutCenter(y:Int, str:String, col:Long) {
+        textout_centre(backScreen, mainFont, str, (128 * GFX_SCALE) + GFX_X_OFFSET, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, col)
+    }
+
+
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
         if (y1 == y2) {
             hline(backScreen, x1 + GFX_X_OFFSET, y1 + GFX_Y_OFFSET, x2 + GFX_X_OFFSET, GFX_COL_WHITE, 2)

@@ -1,5 +1,6 @@
 package com.eline.allegro
 
+import com.eline.allegro.fonts.zxspectrum_data_woff
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
@@ -21,12 +22,14 @@ external class Font {
 }
 
 external val canvas: Canvas
+external var font:Font
 
 external fun allegro_init()
 external fun set_gfx_mode(id:String, width:Int, height:Int)
 external fun makecol(red:Int,green:Int,blue:Int,alpha:Int = definedExternally):Long
 external fun clear_to_color(canvas: Canvas,colour:Long)
 external fun textout_centre(canvas: Canvas,font:Font,s:String,x:Int,y:Int,size:Int,colour:Long,outline:Boolean = definedExternally,width:Int = definedExternally)
+external fun textout(canvas: Canvas,font:Font,s:String,x:Int,y:Int,size:Int,colour:Long,outline:Int = definedExternally,width:Int = definedExternally)
 external fun hline(canvas: Canvas,x1:Int,y:Int,x2:Int,colour:Long,width:Int)
 external fun vline(canvas: Canvas,x:Int,y1:Int,y2:Int,colour:Long,width:Int)
 external fun line(canvas: Canvas,x1:Int,y1:Int,x2:Int,y2:Int,colour:Long,width:Int)
@@ -35,7 +38,7 @@ external fun create_bitmap(width:Int,height:Int):Canvas
 external fun blit(source:Canvas,dest:Canvas,sx:Int,sy:Int,dx:Int,dy:Int,w:Int,h:Int)
 external fun loop(block: () -> Unit, spped:Double)
 external fun BPS_TO_TIMER(bps:Int):Double
-
+external fun load_base64_font(data:String):Font
 
 class Screen {
     companion object {
@@ -49,6 +52,7 @@ class Screen {
     }
 
     lateinit var backScreen:Canvas
+    lateinit var mainFont:Font
     //val GFX_X_CENTRE = 256
     //val GFX_Y_CENTRE = 192
     //val GFX_VIEW_TX = 1
@@ -63,9 +67,13 @@ class Screen {
         val h = element.clientHeight
         set_gfx_mode(id, w, h)
         backScreen = create_bitmap(w,h)
+        mainFont = load_base64_font(zxspectrum_data_woff)
     }
 
 
+    fun textOut(txt:String, x:Int, y:Int) {
+        textout (backScreen,mainFont, txt, (x / (2 / GFX_SCALE)) + GFX_X_OFFSET, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, GFX_COL_WHITE)
+    }
 
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
         if (y1 == y2) {

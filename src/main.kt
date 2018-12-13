@@ -42,6 +42,7 @@ fun main(args: Array<String>) {
         val flightRoll = 1
 
         pythonShip.drawWireframeShip(screen)
+        screen.textOut("Hello", 50,50)
         screen.updateScreen()
         pythonShip.move(flightRoll,0,0)
     }, BPS_TO_TIMER(10))

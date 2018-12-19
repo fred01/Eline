@@ -14,46 +14,41 @@ data class Vector(
         val z: Double
 ) {
     fun multiplyMatrix(m: Matrix): Vector {
-        val x = (this.x * m.vector1.x) +
-                (this.y * m.vector1.y) +
-                (this.z * m.vector1.z)
+        val vx = (x * m[0].x) +
+                (y * m[0].y) +
+                (z * m[0].z)
 
-        val y = (this.x * m.vector2.x) +
-                (this.y * m.vector2.y) +
-                (this.z * m.vector2.z)
+        val vy = (x * m[1].x) +
+                (y * m[1].y) +
+                (z * m[1].z)
 
-        val z = (this.x * m.vector3.x) +
-                (this.y * m.vector3.y) +
-                (this.z * m.vector3.z)
+        val vz = (x * m[2].x) +
+                (y * m[2].y) +
+                (z * m[2].z)
 
-        return Vector(x, y, z)
+        return Vector(vx, vy, vz)
     }
 
     fun unitVector(): Vector {
-        val lx = this.x
-        val ly = this.y
-        val lz = this.z
-
-        val uni = sqrt(lx * lx + ly * ly + lz * lz)
-
-        return Vector(lx / uni, ly / uni, lz / uni)
+        val uni = sqrt(x * x + y * y + z * z)
+        return Vector(x / uni, y / uni, z / uni)
     }
 
     fun vectorDotProduct(second: Vector): Double {
-        return (this.x * second.x) + (this.y * second.y) + (this.z * second.z)
+        return (x * second.x) + (y * second.y) + (z * second.z)
     }
 
     fun rotate (alpha:Double, beta:Double):Vector {
-        var x = this.x
-        var y = this.y
-        var z = this.z
+        var lx = x
+        var ly = y
+        var lz = z
 
-        y -= alpha * x
-        x += alpha * y
-        y -= beta * z
-        z += beta * y
+        ly -= alpha * lx
+        lx += alpha * ly
+        ly -= beta * lz
+        lz += beta * ly
 
-        return Vector(x, y, z)
+        return Vector(lx, ly, lz)
     }
 
 

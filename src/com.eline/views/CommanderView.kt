@@ -8,13 +8,13 @@ import com.eline.universe.playerShip
 class CommanderView: View() {
     override fun draw(screen: Screen) {
         screen.clearDisplay()
-        screen.textOutCenter(10, "COMMANDER ${playerShip.commander.name}" , GFX_COL_GOLD)
-        screen.drawLine(0, 36, screen.screenWidth, 36)
+        screen.textOutCenter(43, "COMMANDER ${playerShip.commander.name}" , GFX_COL_GOLD)
+        screen.drawLine(0, 70, screen.screenWidth, 70)
 
-        screen.textOut( 16, 58, "Present System:", GFX_COL_GREEN)
-        screen.textOut( 300, 58, "Lave")
-        screen.textOut(16, 74, "Hyperspace System:", GFX_COL_GREEN)
-        screen.textOut(300, 74, "Lave")
+        screen.textOut( 16, 102, "Present System:", GFX_COL_GREEN)
+        screen.textOut( 300, 102, "Lave")
+        screen.textOut(16, 122, "Hyperspace System:", GFX_COL_GREEN)
+        screen.textOut(300, 122, "Lave")
     }
 
     override fun update(): View? {

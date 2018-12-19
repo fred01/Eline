@@ -64,7 +64,7 @@ class Color(val colour: Long) {
 class Screen {
     companion object {
         const val GFX_SCALE = 2
-        const val GFX_Y_OFFSET = 44
+        const val GFX_Y_OFFSET = 0
     }
 
     lateinit var backScreen: Canvas
@@ -79,10 +79,10 @@ class Screen {
         val element = document.getElementById(id)!!
         val w = element.clientWidth
         val h = element.clientHeight
-        screenCenterX = screenWidth / 2
-        screenCenterY = screenCenterY / 2
         screenWidth = w
         screenHeight = h
+        screenCenterX = screenWidth / 4
+        screenCenterY = screenHeight / 4
         set_gfx_mode(id, w, h)
         backScreen = create_bitmap(w, h)
         mainFont = load_base64_font(zxspectrum_data_woff)
@@ -94,17 +94,17 @@ class Screen {
     }
 
     fun textOutCenter(y: Int, str: String, col: Color) {
-        textout_centre(backScreen, mainFont, str, screenWidth / 4 * GFX_SCALE , (y / (2 / GFX_SCALE))+ GFX_Y_OFFSET, 16, col.colour)
+        textout_centre(backScreen, mainFont, str, screenWidth / 4 * GFX_SCALE, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, col.colour)
     }
 
 
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
         if (y1 == y2) {
-            hline(backScreen, x1, y1+ GFX_Y_OFFSET, x2, GFX_COL_WHITE.colour, 2)
+            hline(backScreen, x1, y1 + GFX_Y_OFFSET, x2, GFX_COL_WHITE.colour, 2)
         } else if (x1 == x2) {
-            vline(backScreen, x1, y1+ GFX_Y_OFFSET, y2+ GFX_Y_OFFSET, GFX_COL_WHITE.colour, 2)
+            vline(backScreen, x1, y1 + GFX_Y_OFFSET, y2 + GFX_Y_OFFSET, GFX_COL_WHITE.colour, 2)
         } else {
-            line(backScreen, x1, y1+ GFX_Y_OFFSET, x2, y2+ GFX_Y_OFFSET, GFX_COL_WHITE.colour, 2)
+            line(backScreen, x1, y1 + GFX_Y_OFFSET, x2, y2 + GFX_Y_OFFSET, GFX_COL_WHITE.colour, 2)
         }
     }
 
@@ -114,11 +114,10 @@ class Screen {
     }
 
     fun clearDisplay() {
-        rectfill(backScreen, 1, 1, screenWidth - 2, 383, GFX_COL_BLACK.colour)
-        rect(backScreen, 0, 0, screenWidth, 383, GFX_COL_WHITE.colour, 1)
+        rectfill(backScreen, 1, 1, screenWidth - 2, screenHeight - 2, GFX_COL_BLACK.colour)
     }
 
     fun updateScreen() {
-        blit(backScreen, canvas, 0, 0, 0, 0, screenWidth, screenWidth)
+        blit(backScreen, canvas, 0, 0, 0, 0, screenWidth, screenHeight)
     }
 }

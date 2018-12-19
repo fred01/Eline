@@ -31,6 +31,7 @@ external val key: Array<Boolean>
 external val KEY_A: Int
 external val KEY_N: Int
 external val KEY_F1: Int
+external val KEY_SPACE: Int
 
 external fun allegro_init()
 external fun set_gfx_mode(id: String, width: Int, height: Int)

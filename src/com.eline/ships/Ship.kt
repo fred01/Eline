@@ -196,7 +196,7 @@ data class Ship(
                 true
             } else {
                 val cosAngle = vec.unitVector().vectorDotProduct(cameraVec)
-                cosAngle < -0.2
+                cosAngle < -0.1
             }
         }
 

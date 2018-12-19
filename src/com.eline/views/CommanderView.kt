@@ -25,5 +25,6 @@ class CommanderView: View() {
 //            return null
 //        }
     }
-
 }
+
+val commanderView = CommanderView()

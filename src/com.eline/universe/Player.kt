@@ -66,7 +66,7 @@ data class PlayerShipModel(
 
 class PlayerShip {
     var model = PlayerShipModel.CobraMk3
-
+    val commander = Commander()
 	var altitude:Int = 255
 	var cabtemp:Int = 30
     var docked:Boolean = true
@@ -112,3 +112,5 @@ enum class MissileStatus {
     MISSILE_UNARMED,
     MISSILE_ARMED
 }
+
+val playerShip = PlayerShip()

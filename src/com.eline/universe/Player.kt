@@ -1,8 +1,10 @@
 package com.eline.universe
 
+import kotlin.math.abs
+
 class Commander {
-    var name:String = "JAMESON"
-    var mission:Int = 0
+    var name: String = "JAMESON"
+    var mission: Int = 0
     var shipX: Int = 0x14
     var shipY: Int = 0xAD
     @ExperimentalUnsignedTypes
@@ -10,29 +12,31 @@ class Commander {
     var credits: Int = 1000
     var fuel: Int = 70
     var galaxyNumber = 0
-    var frontLaser:LaserType = LaserType.PULSE_LASER
-    var cargoCapacity:Int = 20
+    var frontLaser: LaserType = LaserType.PULSE_LASER
+    var cargoCapacity: Int = 20
     val currentCargo = CargoBay()
     val equipment = Equipment()
-    var legalStatus:Int = 0
+    var legalStatus: Int = 0
     val stationStock = CargoBay()
-    var marketRnd:Int = 0
-    var score:Int = 0
+    var marketRnd: Int = 0
+    var score: Int = 0
+    var dockedPlanet: GalaxySeed? = null
+    var hyperSpacePlanet: GalaxySeed? = null
 }
 
 class CargoBay {
-    val cargo:Map<String, Int> = mutableMapOf()
+    val cargo: Map<String, Int> = mutableMapOf()
 }
 
 class Equipment {
-    var ecm:Boolean = false
-    var fuelScoop:Boolean = false
-    var energyBomb:Boolean = false
-    var extraenergyUnit:Boolean = false
-    var dockingComputer:Boolean = false
-    var galacticHyperdrive:Boolean = false
-    var escapePod:Boolean = false
-    var missiles:Int = 3
+    var ecm: Boolean = false
+    var fuelScoop: Boolean = false
+    var energyBomb: Boolean = false
+    var extraenergyUnit: Boolean = false
+    var dockingComputer: Boolean = false
+    var galacticHyperdrive: Boolean = false
+    var escapePod: Boolean = false
+    var missiles: Int = 3
 }
 
 enum class LaserType {
@@ -42,6 +46,8 @@ enum class LaserType {
     MINING_LASER
 }
 
+var carry_flag: Int = 0
+
 @ExperimentalUnsignedTypes
 class GalaxySeed {
     var a = 0x4a.toUByte()
@@ -50,16 +56,111 @@ class GalaxySeed {
     var d = 0x02.toUByte()
     var e = 0x53.toUByte()
     var f = 0xb7.toUByte()
+
+    fun findPlanet(cx: Int, cy: Int): GalaxySeed {
+        var minDist = 10000
+
+        var planet: GalaxySeed? = null
+        var distance: Int
+        var dx: Int
+        var dy: Int
+
+        IntRange(0, 255).forEach {
+            dx = abs(cx - d.toInt());
+            dy = abs(cy - b.toInt());
+
+            distance = if (dx > dy) {
+                (dx + dx + dy) / 2
+            } else {
+                (dx + dy + dy) / 2
+            }
+
+            if (distance < minDist) {
+                minDist = distance;
+                planet = this
+            }
+
+            this.waggle()
+            this.waggle()
+            this.waggle()
+            this.waggle()
+        }
+
+        return planet!!
+    }
+
+    fun namePlanet(): String {
+        val digrams = "ABOUSEITILETSTONLONUTHNOALLEXEGEZACEBISOUSESARMAINDIREA?ERATENBERALAVETIEDORQUANTEISRION"
+        var gp: String = ""
+        var x: UInt
+        val zero = 0x0.toUInt()
+
+        val size = if ((a.and(0x40.toUByte())) == zero.toUByte()) {
+            3
+        } else {
+            4
+        }
+
+        IntRange(0, size - 1).forEach {
+            x = f.and(0x1F.toUByte()).toUInt()
+            if (x != zero) {
+                x = (x + 12.toUByte()).toUInt()
+                x = (x * 2.toUByte()).toUInt()
+                gp += digrams[x.toInt()]
+                if (digrams[x.toInt() + 1] != '?') {
+                    gp += digrams[x.toInt() + 1]
+                }
+            }
+            waggle()
+        }
+        return gp
+    }
+
+    private fun waggle() {
+        var x: UInt = a + c
+        var y: UInt = b + d
+
+        if (x > 0xFF.toUInt()) {
+            y++
+        }
+
+        x = x.and(0xFF.toUInt())
+        y = y.and(0xFF.toUInt())
+
+        a = c
+        b = d
+        c = e
+        d = f
+
+        x = x + c
+        y = y + d
+
+        if (x > 0xFF.toUInt()) {
+            y++
+        }
+
+        carry_flag = if (y > 0xFF.toUInt()) {
+            1
+        } else {
+            0
+        }
+
+        x = x.and(0xFF.toUInt())
+        y = y.and(0xFF.toUInt())
+
+        e = x.toUByte()
+        f = y.toUByte()
+    }
 }
 
 data class PlayerShipModel(
-        val maxSpeed:Int,
-        val maxRoll:Int,
-        val maxClimb:Int,
-        val maxFuel:Int
+        val maxSpeed: Int,
+        val maxRoll: Int,
+        val maxClimb: Int,
+        val maxFuel: Int
 ) {
     companion object {
-        val CobraMk3 = PlayerShipModel(40,31,8,70)
+        val CobraMk3 = PlayerShipModel(40, 31, 8, 70)
     }
 }
 
@@ -67,15 +168,15 @@ data class PlayerShipModel(
 class PlayerShip {
     var model = PlayerShipModel.CobraMk3
     val commander = Commander()
-	var altitude:Int = 255
-	var cabtemp:Int = 30
-    var docked:Boolean = true
-    var flightSpeed:Int = 0
-    var flightRoll:Int = 0
-    var flightClimb:Int = 0
-    var frontShield:Int = 255
-    var aftShield:Int = 255
-    var energy:Int = 255
+    var altitude: Int = 255
+    var cabtemp: Int = 30
+    var docked: Boolean = true
+    var flightSpeed: Int = 0
+    var flightRoll: Int = 0
+    var flightClimb: Int = 0
+    var frontShield: Int = 255
+    var aftShield: Int = 255
+    var energy: Int = 255
 
     val weapon = PlayerShipWeapon()
 
@@ -93,11 +194,11 @@ class PlayerShip {
 }
 
 class PlayerShipWeapon {
-    var laserTemp:Int = 0
-    var laserCounter:Int = 0
-    var laser:Int = 0
-    var ecmActive:Boolean = false
-    var missileTarget:MissileStatus = MissileStatus.MISSILE_UNARMED
+    var laserTemp: Int = 0
+    var laserCounter: Int = 0
+    var laser: Int = 0
+    var ecmActive: Boolean = false
+    var missileTarget: MissileStatus = MissileStatus.MISSILE_UNARMED
 
     fun reset() {
         laserTemp = 0

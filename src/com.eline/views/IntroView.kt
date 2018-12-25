@@ -32,7 +32,7 @@ class IntroView:View() {
 
     override fun draw(screen: Screen) {
         if (ship.location.z - 100 > 384) {
-            ship.location = ship.location.decZ(100)
+            ship.location = ship.location.decZ(50)
         }
         screen.clearDisplay()
         val flightRoll = 1

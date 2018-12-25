@@ -7,13 +7,14 @@ import com.eline.allegro.loop
 import com.eline.views.View
 import com.eline.views.introView
 
+@ExperimentalUnsignedTypes
 fun main(args: Array<String>) {
     val screen = Screen()
     screen.init("canvas_id")
     install_keyboard()
     screen.clear(GFX_COL_BLACK)
 
-    var view:View = introView
+    var view: View = introView
 
     loop( {
         view.draw(screen)
@@ -22,5 +23,5 @@ fun main(args: Array<String>) {
         if (nextView != null) {
             view = nextView
         }
-    }, BPS_TO_TIMER(10))
+    }, BPS_TO_TIMER(24))
 }

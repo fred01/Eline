@@ -31,7 +31,12 @@ external val key: Array<Boolean>
 external val KEY_A: Int
 external val KEY_N: Int
 external val KEY_F1: Int
+external val KEY_O: Int
 external val KEY_SPACE: Int
+external val KEY_LEFT: Int
+external val KEY_RIGHT: Int
+external val KEY_UP: Int
+external val KEY_DOWN: Int
 
 external fun allegro_init()
 external fun set_gfx_mode(id: String, width: Int, height: Int)
@@ -50,7 +55,8 @@ external fun loop(block: () -> Unit, spped: Double)
 external fun BPS_TO_TIMER(bps: Int): Double
 external fun load_base64_font(data: String): Font
 external fun install_keyboard(enable_keys: List<String> = definedExternally)
-
+external fun circle(bitmap: Canvas, x: Int, y: Int, radius: Int, colour: Long, width: Int)
+external fun circlefill(bitmap: Canvas, x: Int, y: Int, radius: Int, colour: Long)
 
 class Color(val colour: Long) {
     companion object {
@@ -120,5 +126,13 @@ class Screen {
 
     fun updateScreen() {
         blit(backScreen, canvas, 0, 0, 0, 0, screenWidth, screenHeight)
+    }
+
+    fun drawCircle(cx: Int, cy: Int, radius: Int, color: Color) {
+        circle(backScreen, cx, cy, radius, color.colour, 2)
+    }
+
+    fun drawFilledCircle(cx: Int, cy: Int, radius: Int, color: Color) {
+        circlefill(backScreen, cx, cy, radius, color.colour)
     }
 }

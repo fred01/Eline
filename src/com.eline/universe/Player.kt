@@ -57,17 +57,29 @@ class GalaxySeed {
     var e = 0x53.toUByte()
     var f = 0xb7.toUByte()
 
+    fun copy(copyTo:GalaxySeed) {
+        copyTo.a = this.a
+        copyTo.b = this.b
+        copyTo.c = this.c
+        copyTo.d = this.d
+        copyTo.e = this.e
+        copyTo.f = this.f
+    }
+
     fun findPlanet(cx: Int, cy: Int): GalaxySeed {
         var minDist = 10000
 
-        var planet: GalaxySeed? = null
+        val planet = GalaxySeed()
         var distance: Int
         var dx: Int
         var dy: Int
 
+        val glx = GalaxySeed()
+        this.copy(glx)
+
         IntRange(0, 255).forEach {
-            dx = abs(cx - d.toInt());
-            dy = abs(cy - b.toInt());
+            dx = abs(cx - glx.d.toInt())
+            dy = abs(cy - glx.b.toInt())
 
             distance = if (dx > dy) {
                 (dx + dx + dy) / 2
@@ -76,33 +88,36 @@ class GalaxySeed {
             }
 
             if (distance < minDist) {
-                minDist = distance;
-                planet = this
+                minDist = distance
+                glx.copy(planet)
             }
 
-            this.waggle()
-            this.waggle()
-            this.waggle()
-            this.waggle()
+            glx.waggle()
+            glx.waggle()
+            glx.waggle()
+            glx.waggle()
         }
 
-        return planet!!
+        return planet
     }
 
     fun namePlanet(): String {
         val digrams = "ABOUSEITILETSTONLONUTHNOALLEXEGEZACEBISOUSESARMAINDIREA?ERATENBERALAVETIEDORQUANTEISRION"
-        var gp: String = ""
+        var gp = ""
         var x: UInt
         val zero = 0x0.toUInt()
 
-        val size = if ((a.and(0x40.toUByte())) == zero.toUByte()) {
+        val tmpPlanet = GalaxySeed()
+        copy(tmpPlanet)
+
+        val size = if ((tmpPlanet.a.and(0x40.toUByte())) == zero.toUByte()) {
             3
         } else {
             4
         }
 
         IntRange(0, size - 1).forEach {
-            x = f.and(0x1F.toUByte()).toUInt()
+            x = tmpPlanet.f.and(0x1F.toUByte()).toUInt()
             if (x != zero) {
                 x = (x + 12.toUByte()).toUInt()
                 x = (x * 2.toUByte()).toUInt()
@@ -111,12 +126,12 @@ class GalaxySeed {
                     gp += digrams[x.toInt() + 1]
                 }
             }
-            waggle()
+            tmpPlanet.waggle()
         }
         return gp
     }
 
-    private fun waggle() {
+    fun waggle() {
         var x: UInt = a + c
         var y: UInt = b + d
 

@@ -4,7 +4,7 @@
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="JavaScript " useProjectSettings="false">
         <compilerSettings>
-          <option name="additionalArguments" value="-version -Xuse-experimental=kotlin.Experimental" />
+          <option name="additionalArguments" value="-version -Xuse-experimental=kotlin.Experimental -Xuse-experimental=kotlin.ExperimentalUnsignedTypes" />
         </compilerSettings>
         <compilerArguments>
           <option name="sourceMap" value="true" />

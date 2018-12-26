@@ -1,10 +1,10 @@
 package com.eline.ships
 
 import com.eline.allegro.Screen
+import com.eline.universe.UniverseObject
 import com.eline.vector.Matrix
 import com.eline.vector.Point
 import com.eline.vector.Vector
-import kotlin.math.sqrt
 
 
 data class ShipPoint(
@@ -55,133 +55,32 @@ data class ShipData(
         val normals: List<ShipFaceNormal>
 )
 
-data class Ship(
+class Ship(
         val shipData: ShipData,
-        var location: Vector,
-        var rotmat: Matrix,
-        var rotx: Int,
-        var rotz: Int,
-        val flags: Int,
-        val energy: Int,
-        var velocity: Int,
-        var acceleration: Int,
-        val missiles: Int,
-        val target: Int,
-        val bravery: Int,
-        val exp_delta: Int,
-        val exp_seed: Int,
-        var distance: Int
-) {
+        location: Vector,
+        rotmat: Matrix,
+        rotx: Int,
+        rotz: Int
+):UniverseObject(location, rotmat, rotx, rotz) {
+    override fun maxVelocity(): Int = shipData.velocity
+    override fun correctBeta(beta: Double): Double = beta
 
-    fun isDead(): Boolean {
-        return false
+    var energy: Int = shipData.energy
+    var missiles: Int = shipData.missiles
+    var target: Int = 0
+    var bravery: Int = 0
+    val expDelta: Int = 0
+    val expSeed: Int = 0
+    private var dead = false
+    private var remove = false
+    private var angry = false
+
+    override fun draw(screen: Screen) {
+        drawWireframeShip(screen)
     }
 
-    private fun rotateXFirst (a:Double, b:Double, direction:Int):Pair<Double, Double>
-    {
-        return if (direction < 0) {
-            a - (a / 512) + (b / 19) to b - (b / 512) - (a / 19)
-        }
-        else {
-            a - (a / 512) - (b / 19) to b - (b / 512) + (a / 19)
-        }
-    }
+    override fun isDead(): Boolean = dead
 
-
-
-    fun move(flightRoll: Int, flightClimb: Int, flightSpeed:Int) {
-
-        val alpha = flightRoll.toDouble() / 256.0
-        val beta = flightClimb.toDouble() / 256.0
-
-        var x = location.x
-        var y = location.y
-        var z = location.z
-
-        if (!this.isDead()) {
-            if (velocity != 0) {
-                val speed = velocity.toDouble() * 1.5
-
-                x += rotmat[2].x * speed
-                y += rotmat[2].y * speed
-                z += rotmat[2].z * speed
-            }
-
-            if (acceleration != 0) {
-                velocity += acceleration
-                acceleration = 0
-                if (velocity > shipData.velocity) {
-                    velocity = shipData.velocity
-                }
-
-                if (velocity <= 0) {
-                    velocity = 1
-                }
-            }
-        }
-
-        val k2 = y - alpha * x
-        z += beta * k2
-        y = k2 - z * beta
-        x += alpha * y
-
-        z -= flightSpeed
-
-        location = Vector(x, y, z)
-
-        distance = sqrt (x*x+y*y+z*z).toInt()
-
-        rotmat = Matrix(
-                rotmat[0].rotate(alpha, beta),
-                rotmat[1].rotate(alpha, beta),
-                rotmat[2].rotate(alpha, beta)
-        )
-
-
-        if (isDead()) {
-            return
-        }
-
-
-
-        /* If necessary rotate the object around the X axis... */
-
-        if (rotx != 0) {
-            val r1 = rotateXFirst(rotmat[2].x, rotmat[1].x, rotx)
-            val r2 = rotateXFirst(rotmat[2].y, rotmat[1].y, rotx)
-            val r3 = rotateXFirst(rotmat[2].z, rotmat[1].z, rotx)
-            rotmat = Matrix(
-                    rotmat[0],
-                    Vector(r1.second, r2.second, r3.second),
-                    Vector(r1.first, r2.first, r3.first)
-            )
-
-            if ((rotx != 127) && (rotx != -127))
-                rotx -= if (rotx < 0) -1 else 1
-        }
-
-
-        /* If necessary rotate the object around the Z axis... */
-
-        if (rotz != 0) {
-            val r1 = rotateXFirst(rotmat[0].x, rotmat[1].x, rotz)
-            val r2 = rotateXFirst(rotmat[0].y, rotmat[1].y, rotz)
-            val r3 = rotateXFirst(rotmat[0].z, rotmat[1].z, rotz)
-            rotmat = Matrix(
-                    Vector(r1.first, r2.first, r3.first),
-                    Vector(r1.second, r2.second, r3.second),
-                    rotmat[2]
-            )
-
-            if ((rotz != 127) && (rotz != -127))
-                rotz -= if (rotz < 0) -1 else 1
-        }
-
-
-        /* Orthonormalize the rotation matrix... */
-
-        rotmat = rotmat.tidy()
-    }
 
     fun drawWireframeShip(screen: Screen) {
         val transMat = Matrix(

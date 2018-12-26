@@ -11,6 +11,9 @@ abstract class View {
     fun drawHeader(screen: Screen, headerText:String) {
         screen.textOutCenter(43, headerText, Color.GFX_COL_GOLD)
         screen.drawLine(0, 70, screen.screenWidth, 70)
+    }
+
+    open fun onTransition() {
 
     }
 }

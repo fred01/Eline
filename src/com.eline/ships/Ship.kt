@@ -82,7 +82,7 @@ class Ship(
     override fun isDead(): Boolean = dead
 
 
-    fun drawWireframeShip(screen: Screen) {
+    private fun drawWireframeShip(screen: Screen) {
         val transMat = Matrix(
                 this.rotmat[0],
                 this.rotmat[1],
@@ -112,11 +112,11 @@ class Ship(
 
             sy = -sy
 
-            sx += screen.screenCenterX
-            sy += screen.screenCenterY
+            sx += screen.screenCenterX / 2
+            sy += screen.screenCenterY / 2
 
-            sx *= Screen.GFX_SCALE
-            sy *= Screen.GFX_SCALE
+            sx *= 2
+            sy *= 2
 
             Point(sx, sy, 0)
         }

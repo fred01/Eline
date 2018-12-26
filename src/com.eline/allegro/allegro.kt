@@ -31,6 +31,7 @@ external val key: Array<Boolean>
 external val KEY_A: Int
 external val KEY_N: Int
 external val KEY_F1: Int
+external val KEY_1: Int
 external val KEY_O: Int
 external val KEY_SPACE: Int
 external val KEY_LEFT: Int
@@ -88,8 +89,8 @@ class Screen {
         val h = element.clientHeight
         screenWidth = w
         screenHeight = h
-        screenCenterX = screenWidth / 4
-        screenCenterY = screenHeight / 4
+        screenCenterX = screenWidth / 2
+        screenCenterY = screenHeight / 2
         set_gfx_mode(id, w, h)
         backScreen = create_bitmap(w, h)
         mainFont = load_base64_font(zxspectrum_data_woff)
@@ -97,11 +98,11 @@ class Screen {
 
 
     fun textOut(x: Int, y: Int, txt: String, color: Color = Color.GFX_COL_WHITE) {
-        textout(backScreen, mainFont, txt, (x / (2 / GFX_SCALE)), (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, color.colour)
+        textout(backScreen, mainFont, txt, x , y , 16, color.colour)
     }
 
     fun textOutCenter(y: Int, str: String, col: Color) {
-        textout_centre(backScreen, mainFont, str, screenWidth / 4 * GFX_SCALE, (y / (2 / GFX_SCALE)) + GFX_Y_OFFSET, 16, col.colour)
+        textout_centre(backScreen, mainFont, str, screenCenterX, y, 16, col.colour)
     }
 
 

@@ -2,20 +2,22 @@ package com.eline.views
 
 import com.eline.allegro.Color.Companion.GFX_COL_GREEN
 import com.eline.allegro.Color.Companion.GFX_COL_WHITE
+import com.eline.allegro.KEY_1
+import com.eline.allegro.KEY_O
 import com.eline.allegro.Screen
-import com.eline.allegro.Screen.Companion.GFX_SCALE
+import com.eline.allegro.key
 import com.eline.universe.GalaxySeed
 import com.eline.universe.carry_flag
 import com.eline.universe.playerShip
 import kotlin.math.abs
 
 class ShortRangeChartView : View() {
-    var crossX: Int = 0
-    var crossY: Int = 0
+    private var crossX: Int = 0
+    private var crossY: Int = 0
 
     private fun drawFuelLimitCircle(screen: Screen, cx: Int, cy: Int) {
-        val radius = playerShip.commander.fuel * GFX_SCALE
-        val crossSize = 16 * GFX_SCALE
+        val radius = playerShip.commander.fuel * 2
+        val crossSize = 32
 
         screen.drawCircle(cx, cy, radius, GFX_COL_GREEN)
         screen.drawLine(cx, cy - crossSize, cx, cy + crossSize)
@@ -23,13 +25,17 @@ class ShortRangeChartView : View() {
     }
 
     override fun update(): View? {
-        return null
+        return when {
+            key[KEY_O] -> shortRangeChartView
+            key[KEY_1] -> unDockView
+            else -> null
+        }
     }
 
     override fun draw(screen: Screen) {
         screen.clearDisplay()
         drawHeader(screen, "SHORT RANGE CHART")
-        drawFuelLimitCircle(screen, screen.screenCenterX * GFX_SCALE, screen.screenCenterY * GFX_SCALE)
+        drawFuelLimitCircle(screen, screen.screenCenterX, screen.screenCenterY)
 
         val rowUsed = Array(64) { 0 }
 
@@ -56,12 +62,12 @@ class ShortRangeChartView : View() {
                 glx.waggle()
             } else {
                 px = (glx.d - dockedPlanet.d).toInt()
-                px = px * 4 * GFX_SCALE + screen.screenCenterX * GFX_SCALE
+                px = px * 8 + screen.screenCenterX
 
                 py = (glx.b - dockedPlanet.b).toInt()
-                py = py * 2 * GFX_SCALE + screen.screenCenterY * GFX_SCALE
+                py = py * 4 + screen.screenCenterY
 
-                var row = py / (8 * GFX_SCALE)
+                var row = py / (16)
 
                 if (rowUsed[row] == 1) {
                     row++
@@ -80,7 +86,7 @@ class ShortRangeChartView : View() {
                         rowUsed[row] = 1
 
                         val planetName = glx.namePlanet()
-                        screen.textOut(px + (4 * GFX_SCALE), (row * 8 - 5) * GFX_SCALE + 16, planetName)
+                        screen.textOut(px + 8, (row * 8 - 5) * 2 + 16, planetName)
 
                     }
 
@@ -88,7 +94,7 @@ class ShortRangeChartView : View() {
                     /* a planet.  The carry_flag is left over from the name generation. */
                     /* Yes this was how it was done... don't ask :-( */
 
-                    val blobSize = ((glx.f.and(1.toUByte())) + 2.toUByte() + carry_flag.toUByte()).toInt() * GFX_SCALE
+                    val blobSize = ((glx.f.and(1.toUByte())) + 2.toUByte() + carry_flag.toUByte()).toInt() * 2
 
                     screen.drawFilledCircle(px, py, blobSize, GFX_COL_WHITE)
 
@@ -101,8 +107,8 @@ class ShortRangeChartView : View() {
             }
         }
 
-        crossX = ((hyperspacePlanet.d - dockedPlanet.d).toInt() * 4 * GFX_SCALE) + screen.screenCenterX
-        crossY = ((hyperspacePlanet.b - dockedPlanet.b).toInt() * 2 * GFX_SCALE) + screen.screenCenterY
+        crossX = ((hyperspacePlanet.d - dockedPlanet.d).toInt() * 8) + screen.screenCenterX
+        crossY = ((hyperspacePlanet.b - dockedPlanet.b).toInt() * 8) + screen.screenCenterY
     }
 }
 

@@ -1,6 +1,7 @@
 package com.eline.views
 
 import com.eline.allegro.Color.Companion.GFX_COL_GREEN
+import com.eline.allegro.KEY_1
 import com.eline.allegro.KEY_O
 import com.eline.allegro.Screen
 import com.eline.allegro.key
@@ -28,10 +29,10 @@ class CommanderView : View() {
     }
 
     override fun update(): View? {
-        return if (key[KEY_O]) {
-            shortRangeChartView
-        } else {
-            null
+        return when {
+            key[KEY_O] -> shortRangeChartView
+            key[KEY_1] -> unDockView
+            else -> null
         }
     }
 }

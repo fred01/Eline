@@ -21,7 +21,9 @@ fun main(args: Array<String>) {
         screen.updateScreen()
         val nextView = view.update()
         if (nextView != null) {
+            screen.clearDisplay()
             view = nextView
+            view.onTransition()
         }
     }, BPS_TO_TIMER(24))
 }

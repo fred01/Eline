@@ -122,7 +122,11 @@ data class Matrix(
                 Vector(0.0, 1.0, 0.0),
                 Vector(0.0, 0.0, 1.0)
         )
-
+        fun initMatrix() = Matrix(
+                Vector(1.0, 0.0, 0.0),
+                Vector(0.0, 1.0, 0.0),
+                Vector(0.0, 0.0, 1.0)
+        )
     }
 
 }

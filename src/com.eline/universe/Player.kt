@@ -57,7 +57,7 @@ class GalaxySeed {
     var e = 0x53.toUByte()
     var f = 0xb7.toUByte()
 
-    fun copy(copyTo:GalaxySeed) {
+    fun copy(copyTo: GalaxySeed) {
         copyTo.a = this.a
         copyTo.b = this.b
         copyTo.c = this.c
@@ -192,6 +192,8 @@ class PlayerShip {
     var frontShield: Int = 255
     var aftShield: Int = 255
     var energy: Int = 255
+    var rolling: Int = 0
+    var climbing: Int = 0
 
     val weapon = PlayerShipWeapon()
 
@@ -204,6 +206,34 @@ class PlayerShip {
         aftShield = 255
         energy = 255
         weapon.reset()
+    }
+
+    fun decreaseFlightRoll ()
+    {
+        if (flightRoll > -model.maxRoll) {
+            flightRoll--
+        }
+    }
+
+    fun increaseFlightRoll() {
+        if (flightRoll < model.maxRoll) {
+            flightRoll++
+        }
+        rolling = 1
+    }
+
+    fun decreaseFlightClimb() {
+        if (flightClimb > -model.maxClimb) {
+            flightClimb--
+        }
+        climbing = 1
+    }
+
+    fun increaseFlightClimb ()
+    {
+        if (flightClimb < model.maxClimb) {
+            flightClimb++
+        }
     }
 
 }

@@ -9,8 +9,7 @@ import com.eline.views.introView
 
 @ExperimentalUnsignedTypes
 fun main(args: Array<String>) {
-    val screen = Screen()
-    screen.init("canvas_id")
+    val screen = Screen("canvas_id")
     install_keyboard()
     screen.clear(GFX_COL_BLACK)
 

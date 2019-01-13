@@ -1,5 +1,6 @@
 package com.eline.universe
 
+import com.eline.allegro.Color
 import com.eline.allegro.Screen
 import com.eline.vector.Matrix
 import com.eline.vector.Vector
@@ -17,7 +18,7 @@ abstract class UniverseObject(
                     location.y * location.y +
                     location.z * location.z).toInt()
 
-    var acceleration:Int = 0
+    var acceleration: Int = 0
 
 
     private fun rotateXFirst(a: Double, b: Double, direction: Int): Pair<Double, Double> {
@@ -129,7 +130,7 @@ abstract class UniverseObject(
 
     abstract fun draw(screen: Screen)
 
-    abstract fun maxVelocity():Int
+    abstract fun maxVelocity(): Int
 
     fun action() {
         // Do nothing by default
@@ -146,7 +147,27 @@ class Planet(location: Vector, rotmat: Matrix, rotx: Int, rotz: Int) : UniverseO
     override fun isDead(): Boolean = false
 
     override fun draw(screen: Screen) {
+        var x: Int = (location.x * 256 / location.z).toInt()
+        var y: Int = (location.y * 256 / location.z).toInt()
+        y = -y
+        x += (screen.screenCenterX / 2)
+        y += (screen.screenCenterY / 2)
+        x *= 2
+        y *= 2
+        val radius:Int = (6291456 / distance) * 2
 
+        if ((x + radius <  0) ||
+            (x - radius > screen.screenWidth) ||
+            (y + radius < 0) ||
+            (y - radius > screen.screenHeight)) {
+            return
+        }
+
+        drawWireframePlanet(screen, x, y, radius)
+    }
+
+    private fun drawWireframePlanet(screen: Screen, x: Int, y: Int, radius: Int) {
+        screen.drawCircle(x, y, radius, Color.GFX_COL_WHITE)
     }
 
 }

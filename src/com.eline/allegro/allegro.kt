@@ -69,20 +69,15 @@ class Color(val colour: Long) {
 }
 
 
-class Screen {
-    companion object {
-        const val GFX_SCALE = 2
-        const val GFX_Y_OFFSET = 0
-    }
+class Screen(id: String) {
+    private val backScreen: Canvas
+    private val mainFont: Font
+    val screenWidth: Int
+    val screenHeight: Int
+    val screenCenterX: Int
+    val screenCenterY: Int
 
-    lateinit var backScreen: Canvas
-    lateinit var mainFont: Font
-    var screenWidth: Int = 0
-    var screenHeight: Int = 0
-    var screenCenterX = 0
-    var screenCenterY = 0
-
-    fun init(id: String) {
+    init {
         allegro_init()
         val element = document.getElementById(id)!!
         val w = element.clientWidth
@@ -98,27 +93,25 @@ class Screen {
 
 
     fun textOut(x: Int, y: Int, txt: String, color: Color = Color.GFX_COL_WHITE) {
-        textout(backScreen, mainFont, txt, x , y , 16, color.colour)
+        textout(backScreen, mainFont, txt, x, y, 16, color.colour)
     }
 
     fun textOutCenter(y: Int, str: String, col: Color) {
         textout_centre(backScreen, mainFont, str, screenCenterX, y, 16, col.colour)
     }
 
-
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
         if (y1 == y2) {
-            hline(backScreen, x1, y1 + GFX_Y_OFFSET, x2, GFX_COL_WHITE.colour, 2)
+            hline(backScreen, x1, y1, x2, GFX_COL_WHITE.colour, 2)
         } else if (x1 == x2) {
-            vline(backScreen, x1, y1 + GFX_Y_OFFSET, y2 + GFX_Y_OFFSET, GFX_COL_WHITE.colour, 2)
+            vline(backScreen, x1, y1, y2, GFX_COL_WHITE.colour, 2)
         } else {
-            line(backScreen, x1, y1 + GFX_Y_OFFSET, x2, y2 + GFX_Y_OFFSET, GFX_COL_WHITE.colour, 2)
+            line(backScreen, x1, y1, x2, y2, GFX_COL_WHITE.colour, 2)
         }
     }
 
     fun clear(color: Color) {
         clear_to_color(canvas, color.colour)
-
     }
 
     fun clearDisplay() {

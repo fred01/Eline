@@ -16,9 +16,9 @@ class UnDockView : View() {
 
     override fun update(): View? {
         timer++
-        return if (timer > 80) {
-	        playerShip.flightSpeed = 10
-	        playerShip.flightRoll = 0 //-15
+        return if (timer > 40) {
+	        playerShip.flightSpeed = 5
+	        playerShip.flightRoll = 0
 	        playerShip.flightClimb = 0
 
             universe.addPlanet(0.0, 0.0, 65536.0)
@@ -38,8 +38,8 @@ class UnDockView : View() {
     }
 
     override fun draw(screen: Screen) {
-        if (timer % 5 == 0) {
-            screen.drawCircle(screen.screenCenterX, screen.screenCenterY, 60 + (timer / 5) * 30, GFX_COL_WHITE)
+        if (timer % 2 == 0) {
+            screen.drawCircle(screen.screenCenterX, screen.screenCenterY, 60 + (timer / 2) * 30, GFX_COL_WHITE)
         }
     }
 

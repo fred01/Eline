@@ -1,5 +1,4 @@
 
-import com.eline.allegro.BPS_TO_TIMER
 import com.eline.allegro.Color.Companion.GFX_COL_BLACK
 import com.eline.allegro.Screen
 import com.eline.allegro.install_keyboard
@@ -24,5 +23,5 @@ fun main(args: Array<String>) {
             view = nextView
             view.onTransition()
         }
-    }, BPS_TO_TIMER(24))
+    }, 50.0 /*BPS_TO_TIMER(24)*/)
 }

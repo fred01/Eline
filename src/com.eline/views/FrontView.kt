@@ -8,22 +8,21 @@ import com.eline.allegro.Screen
 import com.eline.allegro.key
 import com.eline.universe.playerShip
 import com.eline.universe.universe
+import kotlin.math.abs
 
-class FrontView:View() {
+class FrontView : View() {
     override fun update(): View? {
         if (key[KEY_UP]) {
-			if (playerShip.flightClimb > 0) {
+            if (playerShip.flightClimb > 0) {
                 playerShip.flightClimb = 0
-            }
-			else {
+            } else {
                 playerShip.decreaseFlightClimb()
-			}
+            }
         }
         if (key[KEY_DOWN]) {
             if (playerShip.flightClimb < 0) {
                 playerShip.flightClimb = 0
-            }
-            else {
+            } else {
                 playerShip.increaseFlightClimb()
             }
         }
@@ -36,13 +35,12 @@ class FrontView:View() {
             }
         }
         if (key[KEY_RIGHT]) {
-			if (playerShip.flightRoll > 0) {
+            if (playerShip.flightRoll > 0) {
                 playerShip.flightRoll = 0
+            } else {
+                playerShip.decreaseFlightRoll()
+                playerShip.decreaseFlightRoll()
             }
-			else {
-                playerShip.decreaseFlightRoll()
-                playerShip.decreaseFlightRoll()
-			}
         }
 
         return null
@@ -50,10 +48,13 @@ class FrontView:View() {
 
     override fun draw(screen: Screen) {
         screen.clearDisplay()
-        universe.universeObjects.forEach {universeObject ->
+        universe.universeObjects.forEach { universeObject ->
             universeObject.moveObject()
             if (universeObject.location.z > 0) {
-                universeObject.draw(screen)
+                if (!((abs(universeObject.location.x) > universeObject.location.z) ||    /* Check for field of vision. */
+                        (abs(universeObject.location.y) > universeObject.location.z))) {
+                    universeObject.draw(screen)
+                }
             }
         }
     }
